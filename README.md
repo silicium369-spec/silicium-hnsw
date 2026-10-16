@@ -27,8 +27,8 @@ python3 confrontation_arena.py --num-vectors 100000 --num-queries 1000 --ef 16,3
 To evaluate the pre-compiled C-ABI library inside an ephemeral, read-only Docker container without installing dependencies or running binaries directly on your host OS:
 
 ```bash
-docker run --rm -it -v "$PWD":/workspace:ro -w /tmp/bench python:3.11-slim bash -c \
-  "cp -r /workspace/* . && apt-get update -qq && apt-get install -y -qq curl file util-linux && \
+docker run --rm -it -v "$PWD":/workspace:ro,z -w /tmp python:3.11-slim bash -c \
+  "cp -r /workspace/* . && apt-get update -qq && apt-get install -y -qq curl file util-linux g++ && \
    pip install -q numpy pyyaml usearch hnswlib faiss-cpu && ./reproduce_all.sh"
 ```
 
