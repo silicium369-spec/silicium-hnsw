@@ -1,0 +1,13 @@
+*.so
+*.a
+*.bin
+__pycache__/
+*.pyc
+lib/
+data/
+cache/
+*.log
+.DS_Store
+target/
+.env
+scratch/
