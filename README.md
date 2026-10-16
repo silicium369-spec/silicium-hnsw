@@ -1,6 +1,6 @@
 # Silicium Vector Search Evaluation Suite (x86_64 AVX-512 & AVX2)
 
-High-throughput HNSW vector search engine written in Rust with runtime hardware dispatch (`AVX-512 VNNI/FMA` and `AVX2 FMA`), cache-aligned Flat-SoA graph layouts, and quantized `INT8 SQ8` graph routing with exact `FP32` top-pool reranking (`4.0x` primary vector memory compression).
+High-throughput HNSW vector search engine written in Rust with runtime hardware dispatch (`AVX-512 VNNI/FMA` and `AVX2 FMA`), cache-aligned contiguous graph routing, and quantized `INT8 SQ8` graph routing with exact `FP32` top-pool reranking (`4.0x` primary vector memory compression).
 
 ## Quick Start
 
@@ -20,6 +20,16 @@ To compare directly against third-party engines (`usearch`, `hnswlib`, `faiss-cp
 ```bash
 pip install numpy pyyaml usearch hnswlib faiss-cpu
 python3 confrontation_arena.py --num-vectors 100000 --num-queries 1000 --ef 16,32,64
+```
+
+### Isolated Evaluation (Hermetic Docker Sandbox)
+
+To evaluate the pre-compiled C-ABI library inside an ephemeral, read-only Docker container without installing dependencies or running binaries directly on your host OS:
+
+```bash
+docker run --rm -it -v "$PWD":/workspace:ro -w /tmp/bench python:3.11-slim bash -c \
+  "cp -r /workspace/* . && apt-get update -qq && apt-get install -y -qq curl file util-linux && \
+   pip install -q numpy pyyaml usearch hnswlib faiss-cpu && ./reproduce_all.sh"
 ```
 
 ## 1. SIFT-128D Benchmark Results (AWS `c7a.2xlarge` — AMD EPYC 9R14, Zen 4 AVX-512)
