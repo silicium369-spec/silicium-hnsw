@@ -24,12 +24,16 @@ python3 confrontation_arena.py --num-vectors 100000 --num-queries 1000 --ef 16,3
 
 ### Isolated Evaluation (Hermetic Docker Sandbox)
 
-To evaluate the pre-compiled C-ABI library inside an ephemeral, read-only Docker container without installing dependencies or running binaries directly on your host OS:
+To evaluate the pre-compiled `x86_64` C-ABI library inside an ephemeral, read-only Docker container without installing dependencies or running binaries directly on your host OS:
 
 ```bash
-docker run --rm -it -v "$PWD":/workspace:ro,z -w /tmp python:3.11-slim bash -c \
+# Option A: One-line ephemeral read-only sandbox (128D, 768D & 1536D)
+docker run --rm -it --platform linux/amd64 -v "$PWD":/workspace:ro,z -w /tmp python:3.11-slim bash -c \
   "cp -r /workspace/* . && apt-get update -qq && apt-get install -y -qq curl file util-linux g++ && \
-   pip install -q numpy pyyaml usearch hnswlib faiss-cpu && ./reproduce_all.sh"
+   pip install -q numpy pyyaml usearch hnswlib faiss-cpu && ./reproduce_all.sh && ./reproduce_all.sh --high-dim"
+
+# Option B: Build and run the self-contained evaluation image from Dockerfile
+docker build -t silicium-hnsw . && docker run --rm -it silicium-hnsw
 ```
 
 ## 1. SIFT-128D Benchmark Results (AWS `c7a.2xlarge` — AMD EPYC 9R14, Zen 4 AVX-512)
